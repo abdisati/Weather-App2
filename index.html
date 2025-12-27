@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
-    
+    <div class="container">
+        <h1>Weather App</h1>
+        <div class="textInput">
+            <input type="text" id="input" placeholder="Type City To Search">
+            <button id="search">Search</button>
+        </div>
+        <div class="loader hidden"></div>
+        <p id="error" class="error hidden"></p>
+        <div class="result hidden">
+            <p id="city"></p>
+            <p id="temperature"></p>
+            <p id="wind"></p>
+        </div>
+
+    </div>
+    <script src="App.js"></script>
 </body>
 </html>
