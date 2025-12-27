@@ -1,4 +1,4 @@
-//import the modules
+// //import the modules
 import {Weather} from './weather/Weathergetter.js';
 import {hide,show,setText} from './utils/utils.js';
 
@@ -25,9 +25,10 @@ async function serveWeather() {
 
     try{
         let text=input.value.trim();
-        const result=await  Weather.getWeather(text);
+        const weather = new Weather();
+        const results=await weather.getWeather(text);
 
-        const {city,current}=result;
+        const {city,current}=results;
         //set the elements values
         setText(place,city);
         setText(time,current.time.toString());
@@ -37,7 +38,8 @@ async function serveWeather() {
         show(result);
     }
     catch(e){
-        setText(error,e);
+        setText(error,e.message);
+        show(error);
     }
     finally{
         hide(loader);

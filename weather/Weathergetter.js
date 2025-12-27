@@ -1,54 +1,70 @@
-import {fetchWeatherApi} from "openmeteo";
-
 export class Weather{
     async getWeather(city){
         if(!city){
             throw new Error("City must be entered");
         }
 
-        //get the latitude and longitude information
-        const getWix= await fetch(`https://customer-geocoding-api.open-meteo.com/v1/search?apikey=&name=${city}&count=10&language=en&format=json`);
-        //get the data
-        const getData=await getWix.json();
+        // geocoding (get latitude/longitude)
+        const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`;
+        const geocodeRes = await fetch(geocodeUrl);
+        const geocodeData = await geocodeRes.json();
 
-        //check if getData is valid
-        if(!getData){
-            throw new Error("Data Not Valid");
+        if(!geocodeData || !geocodeData.results || geocodeData.results.length === 0){
+            throw new Error("City not found");
         }
 
-        //destructure it
-        const {name,latitude,longitude}=getData.results[0];
-        //parameters for the api request
-        const params = {
-	latitude: latitude,
-	longitude: longitude,
-	current: ["apparent_temperature", "precipitation", "rain"],
-	wind_speed_unit: "mph",
-	temperature_unit: "fahrenheit",
-	precipitation_unit: "inch",
-};
+        const {name, latitude, longitude} = geocodeData.results[0];
 
-const url = "https://api.open-meteo.com/v1/forecast";
-const responses=await fetchWeatherApi(url,params);
+        // request forecast including hourly variables so we can read apparent temperature, precipitation and rain
+        const params = new URLSearchParams({
+            latitude: latitude,
+            longitude: longitude,
+            current_weather: 'true',
+            hourly: 'apparent_temperature,precipitation,rain',
+            temperature_unit: 'fahrenheit',
+            windspeed_unit: 'mph',
+            precipitation_unit: 'inch',
+            timezone: 'auto'
+        });
 
-//get the utcOffsetSeconds
-const utcOffsetSeconds=responses.utcOffsetSeconds();
+        const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+        const res = await fetch(url);
+        const data = await res.json();
 
-const current=responses.current();
+        if(!data){
+            throw new Error('Weather data not valid');
+        }
 
-//construct the weather data object
-const weatherData= {
-    city,
-    current: {
-        time: new Date(Number(current.time()+utcOffsetSeconds)*1000),
-         apparent_temperature: current.variables(0).value(),
-         precipitation: current.variables(1).value(),
-         rain: current.variables(2).value()
-    }
-};
+        const current = data.current_weather || null;
+        const hourly = data.hourly || null;
 
-return weatherData;
+        let time = current && current.time ? new Date(current.time) : new Date();
+        let temperature = current && typeof current.temperature !== 'undefined' ? current.temperature : null;
 
+        let apparent_temperature = null;
+        let precipitation = null;
+        let rain = null;
 
+        if(hourly && Array.isArray(hourly.time) && current && current.time){
+            const idx = hourly.time.indexOf(current.time);
+            if(idx !== -1){
+                apparent_temperature = hourly.apparent_temperature ? hourly.apparent_temperature[idx] : null;
+                precipitation = hourly.precipitation ? hourly.precipitation[idx] : null;
+                rain = hourly.rain ? hourly.rain[idx] : null;
+            }
+        }
+
+        const weatherData = {
+            city: name,
+            current: {
+                time,
+                temperature,
+                apparent_temperature,
+                precipitation,
+                rain
+            }
+        };
+
+        return weatherData;
     }
 }
