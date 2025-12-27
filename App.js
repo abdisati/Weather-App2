@@ -1,14 +1,16 @@
 //import the modules
-import {Weather} from './weather/Weathergetter';
-import {hide,show,setText} from './utils/utils';
+import {Weather} from './weather/Weathergetter.js';
+import {hide,show,setText} from './utils/utils.js';
 
-//get the elements
+
+
+// //get the elements
 const input=document.getElementById("input");
 const search=document.getElementById("search");
 const loader=document.getElementById("loader");
 const error=document.getElementById("error");
 const result=document.getElementById("result");
-const city=document.getElementById("city");
+const place=document.getElementById("city");
 const time=document.getElementById("time");
 const temperature=document.getElementById("temperature");
 const precip=document.getElementById("precip");
@@ -27,7 +29,7 @@ async function serveWeather() {
 
         const {city,current}=result;
         //set the elements values
-        setText(city,city);
+        setText(place,city);
         setText(time,current.time.toString());
         setText(temperature,current.temperature);
         setText(precip,current.precipitation);
@@ -42,3 +44,11 @@ async function serveWeather() {
     }
 
 }
+
+ //add event listner to the button and input 
+  search.addEventListener("click",serveWeather);
+
+  //add event listener to input
+  input.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter") serveWeather();
+  });
