@@ -38,6 +38,7 @@ const current=responses.current();
 
 //construct the weather data object
 const weatherData= {
+    city,
     current: {
         time: new Date(Number(current.time()+utcOffsetSeconds)*1000),
          apparent_temperature: current.variables(0).value(),
