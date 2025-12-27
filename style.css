@@ -1,0 +1,79 @@
+*{
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background-color: #dcebee;
+    display: flex;
+    justify-content: center;
+    height: 100vw;
+    align-items: center;
+}
+
+.container{
+    width:400px;
+    border:1px solid black;
+    padding:25px;
+    border-radius: 15px;
+    box-shadow: 4px 5px 15px gray;
+    background-color: #daf1f5;
+}
+.textInput{
+    display:flex;
+    padding:15px;
+    gap:5px;
+}
+
+#input{
+    flex:1;
+    padding:10px;
+    border: none;
+    border-radius: 5px;
+    overflow: hidden;
+}
+#input:focus{
+    border:1px solid black;
+}
+
+#search{
+    font-weight: bolder;
+    border-radius: 5px;
+
+}
+
+#search:hover{
+    cursor:pointer;
+}
+
+#search:active{
+    background-color: #f0ffff;
+}
+
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light grey background border */
+    border-top: 8px solid #3498db; /* Blue top border (the spinning part) */
+    border-radius: 50%; /* Makes the div a perfect circle */
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite; /* Apply the animation */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); } /* Start the rotation at 0 degrees */
+    100% { transform: rotate(360deg); } /* End the rotation at 360 degrees */
+}
+
+.result{
+    background-color: #84bbdd;
+    border-radius: 15px;
+    padding:10px;
+    font-weight: 45px;
+    box-shadow: 4px 4px 5px gray;
+   
+}
+
+.hidden{
+    display: none;
+}
